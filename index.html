@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR Code Generator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --card: #181c24;
+      --border: #2a3240;
+      --text: #e7ebf3;
+      --muted: #9aa4b2;
+      --accent: #4da3ff;
+      --accent-hover: #6db4ff;
+      --shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(77, 163, 255, 0.15), transparent 35%),
+        radial-gradient(circle at 85% 85%, rgba(109, 180, 255, 0.12), transparent 35%),
+        var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      padding: 24px;
+    }
+
+    .card {
+      width: min(92vw, 460px);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0)) var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(4px);
+    }
+
+    h1 {
+      font-size: 1.35rem;
+      margin-bottom: 8px;
+      letter-spacing: 0.2px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-bottom: 18px;
+      font-size: 0.95rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    input[type="url"] {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: #121722;
+      color: var(--text);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      margin-bottom: 14px;
+    }
+
+    input[type="url"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(77, 163, 255, 0.18);
+    }
+
+    button {
+      width: 100%;
+      border: none;
+      background: linear-gradient(180deg, var(--accent), #3f95f0);
+      color: #04111f;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      border-radius: 12px;
+      padding: 12px;
+      cursor: pointer;
+      transition: transform 0.16s ease, box-shadow 0.2s ease, background 0.2s ease;
+      box-shadow: 0 10px 24px rgba(77, 163, 255, 0.28);
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      background: linear-gradient(180deg, var(--accent-hover), #58a8ff);
+      box-shadow: 0 14px 28px rgba(77, 163, 255, 0.34);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .qr-wrap {
+      margin-top: 20px;
+      display: grid;
+      place-items: center;
+      min-height: 240px;
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.02);
+      padding: 16px;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-align: center;
+      max-width: 240px;
+      line-height: 1.35;
+    }
+
+    #qrcode {
+      display: grid;
+      place-items: center;
+      background: #ffffff;
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    #qrcode img,
+    #qrcode canvas {
+      display: block;
+      width: 200px !important;
+      height: 200px !important;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>QR Code Generator</h1>
+    <p class="subtitle">Paste a URL and generate your QR code instantly.</p>
+
+    <label for="urlInput">URL</label>
+    <input
+      id="urlInput"
+      type="url"
+      value="https://magify-menu.netlify.app"
+      placeholder="https://example.com"
+      autocomplete="off"
+    />
+
+    <button id="generateBtn" type="button">Generate QR Code</button>
+
+    <section class="qr-wrap">
+      <div id="qrcode" aria-live="polite"></div>
+      <p id="hint" class="hint">Your QR code will appear here.</p>
+    </section>
+  </main>
+
+  <script>
+    const input = document.getElementById("urlInput");
+    const button = document.getElementById("generateBtn");
+    const qrContainer = document.getElementById("qrcode");
+    const hint = document.getElementById("hint");
+
+    function generateQRCode() {
+      const url = input.value.trim();
+      qrContainer.innerHTML = "";
+
+      if (!url) {
+        hint.textContent = "Please enter a URL to generate a QR code.";
+        return;
+      }
+
+      hint.textContent = "";
+      new QRCode(qrContainer, {
+        text: url,
+        width: 200,
+        height: 200,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+
+    button.addEventListener("click", generateQRCode);
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        generateQRCode();
+      }
+    });
+
+    generateQRCode();
+  </script>
+</body>
+</html>
